@@ -1,11 +1,11 @@
-let intialState = 0;
+const intialState = 0;
 
 
 // Create Button and text elements
 
 function createButton(label, func) {
-    let button = document.createElement('button');
-    let buttonTextNode = document.createTextNode(label);
+    const button = document.createElement('button');
+    const buttonTextNode = document.createTextNode(label);
     button.appendChild(buttonTextNode);
 
     button.addEventListener('click', function() {
@@ -16,8 +16,8 @@ function createButton(label, func) {
 }
 
 function createCounterText(text) {
-    let counter = document.createElement('p');
-    let counterTextNode = document.createTextNode(`Counter: ${text}`);
+    const counter = document.createElement('p');
+    const counterTextNode = document.createTextNode(`Counter: ${text}`);
     counter.appendChild(counterTextNode);
 
     return counter;
@@ -34,14 +34,16 @@ const MESSAGES = {
 
 
 function view(dispatch, state) {
-    let component = document.createElement('div');
+    const component = document.createElement('div');
     component.classList.add('outer-div');
 
     component.appendChild(createCounterText(state));
-    component.appendChild(createButton('+', () => {
+
+    component.appendChild(createButton('+', function() {
         dispatch(MESSAGES.ADD);
     } ));
-    component.appendChild(createButton('-', () => {
+
+    component.appendChild(createButton('-', function() {
         dispatch(MESSAGES.SUBTRACT);
     } ));
     
@@ -71,16 +73,26 @@ function updatedState(msg, state) {
 function app(intialState, updatedState, view, node) {
     let state = intialState;
     let currentview = view(dispatch, state);
-    let currentCounterText = createCounterText(intialState);
     node.appendChild(currentview);
 
     function dispatch(msg) {
 
-        state = updatedState(msg, state);
-        const updatedview = view(dispatch, state);
-        node.replaceChild(updatedview, currentview);
-        currentview = updatedview;
+        state = updatedState(msg, state); // changes the counter 
+        const updatedview = view(dispatch, state); // updates the compomenent with new counter value
+        node.replaceChild(updatedview, currentview); // replaces old component with new component
+        currentview = updatedview; // see note below ***:
         
+        /*
+        
+        NOTE:
+
+        re-assigns the currentview to the updatedview - 
+        so that every time the dispatch func is called, 'currentview' is constantlt being updated -
+        this means that the replaceChild method knows which node to overide with the updated node e.g 'updatedview'
+        
+        node.replaceChild(updatedview == 'NEW', currentview == 'OLD');
+
+        */
 
     }
 
